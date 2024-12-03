@@ -15,7 +15,7 @@ public class ApiTests
     }
 
     [Test]
-    public async Task Authenticate_ShouldRetrieveAccessToken()
+    public async Task canGetAccessToken()
     {   
         string accessToken = await Alza.AuthenticateAsync();
         token = accessToken;
@@ -28,7 +28,7 @@ public class ApiTests
     {   
         Assert.IsNotNull(ApiTests.token, "Invalid access token.");
 
-        string reservationList = await Alza.GetReservaionAsync(ApiTests.token);
+        string reservationList = await Alza.GetReservationsAsync(ApiTests.token);
         Console.WriteLine(reservationList);
         Assert.IsNotNull(reservationList, "Resevations exist.");
     }

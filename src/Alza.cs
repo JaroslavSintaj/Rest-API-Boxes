@@ -69,12 +69,47 @@ public class Alza{
         return await response.Content.ReadAsStringAsync();
     }
 
-    public static async Task<string> GetReservaionAsync(string _accessToken)
+    public static async Task<string> GetReservationsAsync(string accessToken)
     {
         using var client = new HttpClient();
         var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservations?page[limit]=20&page[offset]=0&fields[reservation]=openerKey";
 
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+        client.DefaultRequestHeaders.Add("Host", Alza.boxesHost);
+
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public static async Task<string> GetReservationByIDAsync(string accessToken, string resevationID)
+    {
+        using var client = new HttpClient();
+        var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservation?filter[id]="+resevationID+"&fields[reservation]=blocker&fields[reservation]=openerKey";
+
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+        client.DefaultRequestHeaders.Add("Host", Alza.boxesHost);
+
+        var response = await client.GetAsync(url);
+        try{
+        response.EnsureSuccessStatusCode();
+        }catch(HttpRequestException err){
+            // zalogovat error
+            return null;
+        }
+
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public static async Task<string> MakeReservationAsync(string accessToken, string data)
+    {
+        using var client = new HttpClient();
+        var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservation";
+
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
         client.DefaultRequestHeaders.Add("Accept", "application/json");
         client.DefaultRequestHeaders.Add("Host", Alza.boxesHost);
 
