@@ -1,0 +1,10 @@
+{
+  "data": {
+    "reservation": {
+      "id": "reservationID",
+      "attributes": {
+        "status": "CANCELED"
+      }
+    }
+  }
+}

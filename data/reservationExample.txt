@@ -1,0 +1,30 @@
+{
+  "data": {
+        "reservation": {
+        "id": "reservationID",
+        "attributes": {
+            "docNumber": "id_f80938f5-d089-4b37-bf75-1c8217681972",
+            "flowType": "OUTLET",
+            "openerKey": "PARC94375533",
+            "expirationDate": "2024-12-06T12:06:23.63Z",
+            "startReservationDate": "2024-12-01T00:00:00Z",
+            "blocked": "true",
+            "packages": [
+            {
+                "depth": "1.0",
+                "height": "1.0",
+                "width": "1.0",
+                "barcode": "BARR"
+            }
+            ],
+            "type": "IMMEDIATE"
+        },
+        "relationships": {
+            "box": {
+            "id": 6661,
+            "pid": "PID9876"
+            }
+        }
+    }
+    }
+}
