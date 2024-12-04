@@ -9,13 +9,9 @@ public class Alza{
     public static string authorizationHost = "identitymanagement.phx-test.alza.cz";
     public static string boxesHost = "parcellockersconnector-test.alza.cz";
 
-    public Alza()
+    public static async Task<string> AuthenticateAsync(SimpleLogger logger)
     {
-        
-    }
-
-    public static async Task<string> AuthenticateAsync()
-    {
+        logger.LogInfo("run AuthenticateAsync");
         using var client = new HttpClient();
         var url = "https://"+authorizationHost+"/connect/token";
 
@@ -41,7 +37,13 @@ public class Alza{
         request.Content.Headers.ContentLength = contentLength.Length;  
 
         var response = await client.PostAsync(url, requestContent);
+        try{
         response.EnsureSuccessStatusCode();
+        }catch(Exception e){
+            logger.LogError("AuthenticateAsync error: "+e.Message);
+            string message = await response.Content.ReadAsStringAsync();
+            logger.LogError("AuthenticateAsync message: "+message);
+        }
 
         var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -52,8 +54,9 @@ public class Alza{
         return responseBody.Substring(tokenStart, tokenEnd - tokenStart);
     }
 
-    public static async Task<string> GetBoxesAsync(string accessToken)
+    public static async Task<string> GetBoxesAsync(string accessToken, SimpleLogger logger)
     {
+        logger.LogInfo("run GetBoxesAsync");
         using var client = new HttpClient();
         var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/boxes?fields[box]=name&fields[box]=description&fields[box]=address&page[limit]=100&page[offset]=0";
 
@@ -62,13 +65,19 @@ public class Alza{
         client.DefaultRequestHeaders.Add("Host", Alza.boxesHost);
 
         var response = await client.GetAsync(url);
+        try{
         response.EnsureSuccessStatusCode();
-
+        }catch(Exception e){
+            logger.LogError("GetBoxesAsync error: "+e.Message);
+            string message = await response.Content.ReadAsStringAsync();
+            logger.LogError("GetBoxesAsync message: "+message);
+        }
         return await response.Content.ReadAsStringAsync();
     }
 
-    public static async Task<string> GetReservationsAsync(string accessToken)
+    public static async Task<string> GetReservationsAsync(string accessToken, SimpleLogger logger)
     {
+        logger.LogInfo("run GetReservationsAsync");
         using var client = new HttpClient();
         var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservations?page[limit]=20&page[offset]=0&fields[reservation]=openerKey";
 
@@ -77,13 +86,19 @@ public class Alza{
         client.DefaultRequestHeaders.Add("Host", Alza.boxesHost);
 
         var response = await client.GetAsync(url);
+        try{
         response.EnsureSuccessStatusCode();
-
+        }catch(Exception e){
+            logger.LogError("GetReservationsAsync error: "+e.Message);
+            string message = await response.Content.ReadAsStringAsync();
+            logger.LogError("GetReservationsAsync message: "+message);
+        }
         return await response.Content.ReadAsStringAsync();
     }
 
-    public static async Task<string> GetReservationByIDAsync(string accessToken, string resevationID)
+    public static async Task<string> GetReservationByIDAsync(string accessToken, string resevationID, SimpleLogger logger)
     {
+        logger.LogInfo("run GetReservationByIDAsync");
         using var client = new HttpClient();
         var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservation?filter[id]="+resevationID+"&fields[reservation]=blocker&fields[reservation]=openerKey";
 
@@ -94,16 +109,18 @@ public class Alza{
         var response = await client.GetAsync(url);
         try{
         response.EnsureSuccessStatusCode();
-        }catch(HttpRequestException err){
-            // zalogovat error
-            return null;
+        }catch(Exception e){
+            logger.LogError("GetReservationByIDAsync error: "+e.Message);
+            string message = await response.Content.ReadAsStringAsync();
+            logger.LogError("GetReservationByIDAsync message: "+message);
         }
 
         return await response.Content.ReadAsStringAsync();
     }
 
-    public static async Task<string> MakeReservationAsync(string accessToken, string data)
+    public static async Task<string> MakeReservationAsync(string accessToken, string data, SimpleLogger logger)
     {
+        logger.LogInfo("run MakeReservationAsync");
         using var client = new HttpClient();
         var url = "https://"+Alza.boxesHost+"/parcel-lockers/v2/reservation";
 
@@ -120,8 +137,15 @@ public class Alza{
         request.Content.Headers.ContentLength = contentLength.Length;  
 
         var response = await client.PostAsync(url, requestContent);
-        
-        var responseBody = await response.Content.ReadAsStringAsync();
+        try{
+            response.EnsureSuccessStatusCode();
+        }catch(Exception e){
+            logger.LogError("MakeReservationAsync error: "+e.Message);
+            
+            string message = await response.Content.ReadAsStringAsync();
+            logger.LogError("MakeReservationAsync message: "+message);
+        }
+
         return await response.Content.ReadAsStringAsync();
     }
 
